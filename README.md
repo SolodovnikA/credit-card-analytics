@@ -2,15 +2,13 @@
 
 **Question:** why do credit card customers leave a bank, and which signals show it early enough to act?
 
-**Status:** work in progress. Blocks 1–3 are done; an A/B test is next.
-
 **Data:** [Credit Card Customers (BankChurners)](https://www.kaggle.com/datasets/sakshigoyal7/credit-card-customers), 10,127 customers of a bank, 1,627 of whom left. The notebook loads a GitHub mirror of the original Kaggle file.
 
-**Tools:** SQL (DuckDB: GROUP BY on several columns, CASE, HAVING) for all calculations, Python (pandas, matplotlib) for loading data and charts, Google Colab.
+**Tools:** SQL (DuckDB: GROUP BY on several columns, CASE, HAVING) for all calculations; Python (pandas, matplotlib, statsmodels) for charts and the A/B test; Google Colab.
 
 **Notebook:** [credit_card_analytics.ipynb](credit_card_analytics.ipynb)
 
-## Key findings so far
+## Key findings
 
 ![Churn by activity](images/churn_by_activity.png)
 
@@ -24,14 +22,18 @@
 5. **One segment holds half of all churn.** Customers inactive for 3+ months **and** making fewer than 60 transactions a year churn at 44.6% vs 2.6% for the safest segment. They are 19% of customers but about half of everyone who left (~849 of 1,627).
 6. **A drop in activity beats a low level.** Among low-activity customers, those who left halved their transactions from Q1 to Q4 (ratio 0.46), while those who stayed barely changed (0.78). Many customers always use the card little and stay.
 
-**What it could mean for the bank:** falling card activity looks like an early warning sign. A candidate rule: target customers whose transactions fall by ~40%+ quarter over quarter, or who are inactive for 2–3 months with under ~5 transactions a month. These are correlations, not proven causes; an A/B test is the way to check whether a retention offer actually helps.
+7. **A retention offer works, but only pays off under a cost limit.** In a simulated A/B test on the high-risk segment (6,000 customers, about 3,000 per group, 2,389 needed for 80% power), churn fell from 44.6% to 41.1%: −3.5 p.p., 95% CI −6.0 to −1.0, p = 0.006. The offer is worth launching only if it costs less than about 3.5% of a customer's yearly value (about 1% in the pessimistic case). Statistically significant is not the same as profitable.
 
-## Plan
+**What it could mean for the bank:** falling card activity looks like an early warning sign. A candidate rule: target customers whose transactions fall by ~40%+ quarter over quarter, or who are inactive for 2–3 months with under ~5 transactions a month. These are correlations, not proven causes; the A/B test in block 4 shows how a retention offer would be checked before launch.
+
+## Structure
 
 - [x] **1. Churn overview:** overall churn, cuts by card type, income, activity
 - [x] **2. Where does the risk start?** Thresholds by inactivity, transactions and contacts
 - [x] **3. Segments:** riskiest segment, combinations with HAVING, activity change vs level
-- [ ] **4. A/B test:** evaluate a retention offer: conversion, statistical significance, sample size, launch decision
+- [x] **4. A/B test:** sample size, two-proportion z-test, confidence interval, break-even launch decision
+
+*The A/B test data is simulated: there is no public data on retention offers for this bank. Blocks 1–3 use the real dataset.*
 
 ## Author
 
